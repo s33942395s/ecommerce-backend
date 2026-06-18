@@ -25,6 +25,11 @@ public class AuthController {
     // POST http://localhost:8080/api/auth/register
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
+        //空帳密檢查
+        if (user == null || isBlank(user.getUsername()) || isBlank(user.getPassword())) {
+            return ResponseEntity.badRequest().body("錯誤：帳號和密碼不可為空！");
+        }
+
         // 檢查帳號是否重複
         if (userRepository.existsByUsername(user.getUsername())) {
             return ResponseEntity.badRequest().body("錯誤：該帳號已被註冊！");
@@ -66,5 +71,9 @@ public class AuthController {
                     }
                 })
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("錯誤：找不到該帳號！"));
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
     }
 }

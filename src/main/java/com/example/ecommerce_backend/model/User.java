@@ -3,6 +3,7 @@ package com.example.ecommerce_backend.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Data
 @Entity
@@ -31,5 +32,10 @@ public class User {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    @JsonIgnore
+    public String getPassword() {
+        return password;
     }
 }

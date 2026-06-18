@@ -9,6 +9,7 @@ import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @RestController
@@ -43,7 +44,11 @@ public class ProductController {
     // 3. 新增商品
     // 測試網址：POST http://localhost:8080/api/products (Body 帶 JSON)
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
+    public ResponseEntity<?> createProduct(@RequestBody Product product) {
+        if (hasInvalidPrice(product)) {
+            return ResponseEntity.badRequest().body("錯誤：商品價格不可為負數！");
+        }
+
         Product savedProduct = productRepository.save(product);
         return ResponseEntity.ok(savedProduct);
     }
@@ -51,7 +56,11 @@ public class ProductController {
     // 4. 修改商品資訊
     // 測試網址：PUT http://localhost:8080/api/products/1 (Body 帶 JSON)
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {
+    public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {
+        if (hasInvalidPrice(productDetails)) {
+            return ResponseEntity.badRequest().body("錯誤：商品價格不可為負數！");
+        }
+
         return productRepository.findByIdAndIsDeletedFalse(id).map(existingProduct -> {
             existingProduct.setName(productDetails.getName());
             existingProduct.setPrice(productDetails.getPrice());
@@ -70,5 +79,9 @@ public class ProductController {
             productRepository.save(product);
             return ResponseEntity.noContent().<Void>build(); // 回傳 204 No Content
         }).orElse(ResponseEntity.notFound().build());
+    }
+
+    private boolean hasInvalidPrice(Product product) {
+        return product == null || product.getPrice() == null || product.getPrice().compareTo(BigDecimal.ZERO) < 0;
     }
 }

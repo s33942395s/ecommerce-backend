@@ -38,16 +38,25 @@ public class JwtInterceptor implements HandlerInterceptor {
         try {
             // 5. 解析 Token 並檢查是不是 ADMIN 權限
             String role = jwtUtil.extractRole(token);
+            String uri = request.getRequestURI();
 
-            if ("ADMIN".equalsIgnoreCase(role)) {
-                return true; // 是管理員，准許通過！
-            } else {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.setContentType("application/json;charset=UTF-8");
-                response.setCharacterEncoding("UTF-8");
-                response.getWriter().write("錯誤：權限不足！只有管理員(ADMIN)可以操作商品。");
-                return false;
+            if (uri.contains("/api/orders")) {
+                return true; // 訂單相關的 API 只要登入即可，不需要特別檢查角色
             }
+
+            if (uri.contains("/api/products")){
+                if ("ADMIN".equalsIgnoreCase(role)) {
+                    return true; // 是管理員，准許通過！
+                } else {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("錯誤：權限不足！只有管理員(ADMIN)可以操作商品。");
+                    return false;
+                }
+            }
+
+            return true; // 其他 API 先放行，未來可以再加更多細部檢查
         } catch (Exception e) {
             // Token 過期或被竄改時會噴異常
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

@@ -16,6 +16,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // 看守商品管理的所有 API (/api/products/**)
         registry.addInterceptor(jwtInterceptor)
-                .addPathPatterns("/api/products/**");
+                .addPathPatterns("/api/products/**","/api/orders/**"); // 也看守訂單相關的 API，確保下單前必須登入;
     }
 }
