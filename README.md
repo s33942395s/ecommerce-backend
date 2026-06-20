@@ -281,4 +281,10 @@ docker compose down -v
 ```bash
 docker exec -it ecommerce-postgres psql -U postgres -d ecommerce_db
 ```
+## API Documentation
 
+OpenAPI JSON:
+http://localhost:8080/v3/api-docs
+
+Swagger UI:
+http://localhost:8080/swagger-ui/index.html
