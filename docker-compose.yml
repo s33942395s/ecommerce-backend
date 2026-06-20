@@ -32,7 +32,7 @@ services:
       DB_NAME: ${DB_NAME:-ecommerce_db}
       DB_USER: ${DB_USER:-postgres}
       DB_PASS: ${DB_PASS:-887985}
-      JPA_DDL_AUTO: ${JPA_DDL_AUTO:-update}
+      JPA_DDL_AUTO: ${JPA_DDL_AUTO:-validate}
       JWT_SECRET: ${JWT_SECRET:-change-this-secret-for-production}
     ports:
       - "${APP_PORT:-8080}:8080"
