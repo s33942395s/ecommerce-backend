@@ -3,7 +3,7 @@ package com.example.ecommerce_backend.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Data
 @Entity
@@ -19,6 +19,7 @@ public class User {
     private String username;
 
     // 密碼，因為之後會用 BCrypt 雜湊加密，所以長度留 100 絕對夠長
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false, length = 100)
     private String password;
 
@@ -34,8 +35,4 @@ public class User {
         this.createdAt = LocalDateTime.now();
     }
 
-    @JsonIgnore
-    public String getPassword() {
-        return password;
-    }
 }
