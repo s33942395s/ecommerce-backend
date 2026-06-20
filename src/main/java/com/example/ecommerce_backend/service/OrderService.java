@@ -47,17 +47,12 @@ public class OrderService {
             }
 
             Product product = productRepository.findByIdAndIsDeletedFalse(itemRequest.getProductId())
-                    .orElseThrow(() -> new RuntimeException("錯誤：商品 ID " + itemRequest.getProductId() + " 不存在！"));
-
-            // 檢查是否已被軟刪除
-            if (product.getIsDeleted()) {
-                throw new RuntimeException("錯誤：商品 " + product.getName() + " 已下架！");
-            }
+                    .orElseThrow(() -> new RuntimeException("錯誤：商品 ID " + itemRequest.getProductId() + " 已下架或不存在！"));
 
             // 【扣庫存】
             int updatedRows = productRepository.deductStockIfEnough(product.getId(), itemRequest.getQuantity());
             if (updatedRows == 0) {
-                throw new RuntimeException("錯誤：商品 " + product.getName() + " 庫存不足！目前剩餘: " + product.getStock());
+                throw new RuntimeException("錯誤：商品 " + product.getName() + " 庫存不足！");
             }
 
             // 建立訂單明細
