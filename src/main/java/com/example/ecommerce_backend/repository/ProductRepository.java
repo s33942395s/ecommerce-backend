@@ -19,6 +19,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findByIdAndIsDeletedFalse(Long id);
 
     @Modifying(flushAutomatically = true)
+    // 這個方法會嘗試扣減庫存，只有在庫存足夠的情況下才會成功扣減並回傳更新的行數（1 或 0）條件式SQL，確保在高併發下不會出現超賣問題
     @Query("""
             update Product p
             set p.stock = p.stock - :quantity,
